@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Custom Event Demo</title>
+</head>
+<body>
+
+ <h2>Custom Event Example</h2>
+ <button id="triggerBtn">Trigger Custom Event</button>
+
+
+ <div id="targetBox" style="padding: 10px; margin-top: 10px; border: 1px solid #ccc;">
+   Waiting for custom event...
+ </div>
+ <div>
+    <ul>
+        <li>chandra</li>
+        <li>promax</li>
+    </ul>
+ </div>
+
+
+ <script>
+const target=document.getElementById("targetBox");
+
+//custom Event
+target.addEventListener("hello",function(e){
+    target.innerText='custom event triggered ! Hello'+e.detail.name;
+})
+    document.getElementById("triggerBtn").addEventListener("click",function(e){
+    const customEven =new CustomEvent("hello",{
+        detail:{'name':'world'}
+
+    });
+    target.dispatchEvent(customEven);
+})
+$
+
+</script>
+</body>
+</html>

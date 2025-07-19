@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Search Game</title>
+        <link rel="stylesheet" href="index.css">
+        <style>
+            .box{
+                cursor: pointer;
+                padding: 10px;
+                border: 1px solid white;
+                background-color: #8AB6F9;
+            }
+        </style>
+    </head>
+    <body style="background-color:  #00246B;" >
+        <header id="displayNumber" style="display: flex;direction: column; justify-content: center;gap: 100px;align-items: center;text-align: center; border: 1px solid #80C4B7;height: fit-content; width: 100vp; background-color: #CADCFC;text-align: center;">
+            <p id="question_number" style="font-size: 30px;;">Que 0/10</p> 
+            <h1>Search Number</h1>
+            <p id="score" style="font-size: 30px;">score 0</p>
+        </header>
+        <div id="fullBlock" style="display: flex;flex-direction: row; gap: 150px;align-items: center;margin-left: 100px;">
+            <p style="color: aliceblue;font-size: 100px;">{{ temp }}</p>
+        <div id="container" style=" height:fit-content;width: fit-content; display: grid; grid-template-columns: repeat(14,1fr);grid-template-rows: repeat(10,1fr) ;text-align: center;align-items: center; border: 3px solid white;height: fit-content;margin-top: 35px;padding: 5px;">
+              {%for i in range(1,183) %}
+                <div id="grid-{{i}}" onclick="change(event)" class="box">{{ prana['grid-' ~ i] }}</div>
+            {%endfor  %}
+                </div>
+                <p id="timer" style="  font-size: 100px;color: white;">10 Sec</p>
+            
+                </div>
+                <script>
+                    
+                    if (!localStorage.getItem('iterations')) {
+                        localStorage.setItem('iterations', 0);
+                     }
+                    if (!localStorage.getItem('score')) {
+                        localStorage.setItem('score', 0);
+                    }
+                    
+                    document.addEventListener('DOMContentLoaded', () => {
+                        document.getElementById('score').textContent=`Score: ${Number(localStorage.getItem('score'))}`;
+                        document.getElementById('question_number').textContent = `Que ${Number(localStorage.getItem('iterations'))}/10`;
+                    });
+                                
+                    function change(event){
+                        const element=event.target;
+                        const number= element.innerText;
+                        fetch('/check',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type': 'application/json',
+                            },
+                            body:JSON.stringify({number:number})
+                        })
+                        .then(response =>response.json())
+                        .then(data=>{
+                            if(data['status']=='correct'){
+                                let score=Number(localStorage.getItem('score'));
+                                score+=10;
+                                localStorage.setItem('score', score);
+                                document.getElementById('score').textContent=`Score: ${Number(localStorage.getItem('score'))}`;
+                                
+                                event.target.style.backgroundColor = 'green';
+                            }
+                            else {
+                                let score=Number(localStorage.getItem('score'));
+                                score-=5;
+                                localStorage.setItem('score', score);
+                                document.getElementById('score').textContent=`Score: ${Number(localStorage.getItem('score'))}`;
+                                event.target.style.backgroundColor = 'red';
+                            }
+                            
+                
+                        });
+                        
+                    };
+                    let p=10;
+                    function time(){
+                        document.getElementById('timer').textContent=p+' Sec';
+                        p--;
+                    }
+                    let k=setInterval(time,1000);
+                    setTimeout(()=>{
+             
+                        clearInterval(k)
+                    },11000)
+                    function conti() {
+                        let current = Number(localStorage.getItem('iterations'));  
+                        current++;  
+                        localStorage.setItem('iterations',current);
+                         if (current==11){
+                            document.getElementById('fullBlock').innerHTML = '<h1 style="margin-top:50px; white-space:nowrap; font-size:50px; margin-left:325px; height:100px;width:100px; color: white;text-align:center;">Game Over! Your final score is: ' + localStorage.getItem('score') + '</h1>';
+                            localStorage.clear();
+                                clearInterval(fun);
+                                
+                                return;
+                        }
+                        fetch('/restart')   
+                        .then(response => response.json())
+                        .then(data=>{
+                            if (data['status']=='success'){
+                            location.reload();
+                      
+                            }
+                         
+                        })
+
+                    };
+                    
+                    let fun=setInterval(conti,11000); 
+                </script>
+        </body>
+        </html>

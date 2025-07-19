@@ -1,0 +1,11 @@
+.displayNumber{
+    border: 2px solid #80C4B7;
+    height: 100px;
+    width: 100vp;
+    background-color: #E26274;
+}
+.container{
+    display: grid;
+    grid-template-columns: repeate(10,1fr);
+    border: 3px solid #000;
+}
