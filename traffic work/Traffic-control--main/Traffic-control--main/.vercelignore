@@ -1,0 +1,8 @@
+backend/
+node_modules/
+.vscode/
+.eslintcache
+dist/
+*.log
+.env
+.env.local
